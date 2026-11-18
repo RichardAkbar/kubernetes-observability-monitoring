@@ -122,6 +122,7 @@ materi awal proyek. Ganti atau lengkapi dengan screenshot hasil
 pengujian dari environment milik proyek.
 
 Status: PENDING — perbarui setelah pengujian selesai
+
 Checkpoint 02 --- Implementasi Centralized Logging
 Aktivitas:
 - Melakukan deployment Elasticsearch.
