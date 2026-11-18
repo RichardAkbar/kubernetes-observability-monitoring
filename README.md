@@ -135,13 +135,14 @@ Hasil implementasi:
 Catat komponen yang berhasil di-deploy, alur log yang terbentuk, serta indeks yang dihasilkan di Elasticsearch.
 
 Bukti pengujian:
+![alt text](<4. centralledd logging.png>)
 
+![alt text](<4. .png>)
 
 Gambar berikut merupakan referensi visual implementasi centralized
 logging dari materi awal. Tambahkan screenshot aktual yang
 memperlihatkan status komponen, aliran log, dan hasil pencarian log.
 
-Status: PENDING — perbarui setelah pengujian selesai
 Checkpoint 04 --- Implementasi Prometheus Metrics
 Aktivitas:
 - Melakukan deployment Prometheus.
@@ -155,11 +156,13 @@ Catat target yang berhasil di-scrape, jenis metrics yang tersedia, dan hasil que
 
 Bukti pengujian:
 
+![alt text](prome.png)
+
 Gambar berikut merupakan referensi visual implementasi Prometheus.
 Lengkapi dengan screenshot aktual halaman Targets dan hasil query
 metrics.
 
-Status: PENDING — perbarui setelah pengujian selesai
+
 
 Checkpoint 05 --- Implementasi Grafana Dashboard
 Aktivitas:
@@ -173,11 +176,13 @@ Jelaskan dashboard yang berhasil dibuat, data source yang digunakan, dan metrics
 
 Bukti pengujian:
 
+![alt text](grafana.png)
+
 Gambar berikut merupakan referensi visual dashboard Grafana dari materi
 awal proyek. Tambahkan screenshot dashboard aktual yang menampilkan
 metrics dari cluster.
 
-Status: PENDING — perbarui setelah pengujian selesai
+
 Checkpoint 06 --- Integrasi Observability
 Aktivitas:
 - Mengintegrasikan centralized logging dan metrics monitoring.
@@ -191,187 +196,74 @@ Jelaskan bagaimana log dan metrics berhasil digunakan secara bersamaan untuk mem
 
 Bukti pengujian:
 
+![alt text](overbality.png)
+
 Gambar berikut merupakan referensi visual integrasi observability dari
 materi awal. Ganti atau lengkapi dengan bukti aktual yang menunjukkan
 aliran data logging dan metrics.
 
-Status: PENDING — perbarui setelah pengujian selesai
-Checkpoint 07 --- Simulasi Incident dan Troubleshooting
-Aktivitas:
-- Melakukan simulasi HTTP 500.
-- Melakukan simulasi pod failure.
-- Menguji perilaku container restart.
-- Menganalisis metrics melalui Grafana.
-- Menginvestigasi log melalui Kibana.
-- Mengidentifikasi root cause.
-- Melakukan recovery dan memvalidasi kondisi aplikasi.
-Hasil implementasi:
-Dokumentasikan incident yang benar-benar disimulasikan, gejala yang ditemukan, root cause, tindakan perbaikan, dan hasil recovery.
-Laporan Incident
-  Informasi         Hasil
-  Jenis Incident    Isi berdasarkan simulasi
-Waktu Kejadian    Isi waktu pengujian
-Dampak            Isi dampak terhadap aplikasi/workload
-Penyebab          Isi root cause setelah investigasi
-Metode Deteksi    Grafana / Kibana / pemeriksaan Kubernetes
-Solusi            Isi tindakan recovery
-Status Recovery   Pending / Berhasil / Gagal
 
-Bukti kondisi sebelum incident
+### Hasil Implementasi
 
-Gambar berikut merupakan referensi kondisi workload sebelum simulasi
-gangguan. Pastikan screenshot aktual menunjukkan jumlah replica dan
-kondisi pod sebelum incident dimulai.
+Simulasi incident dilakukan dengan menghapus salah satu Pod dari Deployment `incident-test` yang dikonfigurasi menggunakan dua replica.
 
-Bukti saat incident
-<!-- Tambahkan screenshot kondisi pod, event, error HTTP, atau container restart. -->
+Sebelum simulasi dimulai, kedua Pod berada dalam kondisi `Running` dengan status `1/1 Ready`. Salah satu Pod kemudian dihapus secara manual untuk menguji kemampuan Kubernetes dalam mempertahankan jumlah replica yang diinginkan.
 
-Bukti investigasi
-<!-- Tambahkan screenshot hasil analisis log Kibana dan metrics Grafana. -->
+Setelah penghapusan dilakukan, ReplicaSet mendeteksi bahwa jumlah Pod tidak sesuai dengan konfigurasi yang ditentukan. Kubernetes kemudian membuat Pod pengganti secara otomatis.
 
-Bukti setelah recovery
-<!-- Tambahkan screenshot kondisi aplikasi dan workload setelah recovery. -->
+Hasil validasi menunjukkan bahwa jumlah workload kembali menjadi dua Pod dengan kondisi `1/1 Running`. Hal ini membuktikan bahwa mekanisme self-healing Kubernetes berjalan dengan baik dalam menangani simulasi kegagalan Pod.
 
-Catatan pengujian: Pada materi awal dicatat bahwa jumlah replica
-tetap 2 ketika simulasi dilakukan. Verifikasi kembali kondisi tersebut
-menggunakan output Kubernetes sebelum menjadikannya kesimpulan hasil
-pengujian.
+### Laporan Incident
 
-Status: PENDING — perbarui setelah simulasi dan recovery selesai
-Checkpoint 08 --- Dokumentasi dan Finalisasi Proyek
-Aktivitas:
-- Menyelesaikan dokumentasi README.
-- Membuat dan merapikan diagram arsitektur.
-- Merapikan konfigurasi Kubernetes.
-- Mengumpulkan screenshot evidence.
-- Menyusun laporan pengujian.
-- Melakukan final Git push.
-- Menyusun artikel dokumentasi proyek di Medium.
-Hasil implementasi:
-Catat kelengkapan dokumentasi, konfigurasi final, dan commit terakhir repository.
+| Informasi | Hasil Pengujian |
+|---|---|
+| Jenis Incident | Pod Failure – Manual Pod Deletion |
+| Waktu Kejadian | 18 November 2026 |
+| Dampak | Salah satu Pod dihapus sehingga jumlah Pod aktif berkurang sementara |
+| Penyebab | Penghapusan Pod secara manual untuk menguji mekanisme self-healing |
+| Metode Deteksi | Pemeriksaan Kubernetes menggunakan kubectl dan Kubernetes Events |
+| Solusi | ReplicaSet membuat Pod pengganti secara otomatis |
+| Status Recovery | Berhasil |
 
-Bukti pengujian:
-<!-- Tambahkan screenshot halaman repository GitHub setelah finalisasi. -->
+### Bukti Kondisi Sebelum Incident
 
-Status: PENDING — perbarui setelah seluruh dokumentasi selesai
-1.  Hasil Pengujian
-Tabel berikut digunakan sebagai checklist validasi keseluruhan platform.
-Ubah status berdasarkan hasil pengujian aktual, bukan hanya berdasarkan
-konfigurasi yang sudah dibuat.
-                No. Skenario          Hasil yang       Status
-                    Pengujian         Diharapkan       
+![alt text](<before incident.png>)
+Screenshot menunjukkan dua Pod pada Deployment `incident-test` dalam kondisi `1/1 Running` sebelum simulasi gangguan dilakukan. Kedua Pod berjalan pada node yang berbeda, yaitu `node01` dan `node02`.
 
-                  1 Kubernetes        Seluruh node     Pending
-                    Cluster Health    berada dalam     
-                                      kondisi Ready    
 
-                  2 Elasticsearch     Elasticsearch    Pending
-                    Health            API dapat        
-                                      diakses          
+### Bukti Saat Incident
+![alt text](<setelah incident.png>)
+Simulasi dilakukan dengan menghapus Pod `incident-test-6998d6dc-d2mvl` menggunakan perintah `kubectl delete pod`. Penghapusan tersebut digunakan untuk menguji respons Kubernetes ketika salah satu Pod mengalami kegagalan.
 
-                  3 Log Collection    Log berhasil     Pending
-                                      dikumpulkan oleh 
-                                      Fluent Bit       
+### Bukti Investigasi
 
-                  4 Log Processing &  Log berhasil     Pending
-                    Indexing          diproses dan     
-                                      diindeks         
+Kubernetes Events menunjukkan aktivitas penghapusan Pod, proses pembuatan Pod baru oleh ReplicaSet, serta penjadwalan dan proses startup container. Hasil pemeriksaan digunakan untuk memastikan bahwa mekanisme recovery berjalan sesuai konfigurasi Deployment.
 
-                  5 Log Visualization Log dapat dicari Pending
-                                      melalui Kibana   
+### Bukti Setelah Recovery
 
-                  6 Prometheus        Target           Pending
-                    Targets           monitoring       
-                                      berstatus UP     
+Setelah proses recovery, Kubernetes berhasil membuat Pod pengganti `incident-test-6998d6dc-nlnvc`. Hasil pemeriksaan menunjukkan dua Pod kembali berada dalam kondisi `1/1 Running` dan tersebar pada `node01` serta `node02`.
 
-                  7 Metrics           Metrics node dan Pending
-                    Collection        objek Kubernetes 
-                                      tersedia         
+### Catatan Pengujian
 
-                  8 Grafana Dashboard Dashboard        Pending
-                                      menampilkan data 
-                                      dari Prometheus  
+Berdasarkan hasil pengujian, jumlah replica berhasil dipertahankan sebanyak dua Pod setelah proses recovery selesai. Pengujian ini membuktikan mekanisme self-healing Kubernetes melalui ReplicaSet ketika terjadi penghapusan Pod secara manual.
 
-                  9 Incident          Gangguan         Pending
-                    Simulation        berhasil         
-                                      disimulasikan    
-                                      dan diamati      
+Kesimpulan
 
-                 10 Troubleshooting   Log dan metrics  Pending
-                                      membantu         
-                                      investigasi      
+Project Kubernetes Observability & Monitoring bertujuan membangun sistem observability untuk memantau kondisi cluster Kubernetes, mengumpulkan metrics, mengelola log secara terpusat, serta membantu proses troubleshooting ketika terjadi gangguan pada workload.
 
-                 11 Recovery Testing  Aplikasi kembali Pending
-                                      ke kondisi yang  
-                                      diharapkan       
+Dalam project ini, dua komponen utama observability diimplementasikan:
 
-1.  Struktur Repository
-Struktur berikut merupakan rancangan pengelompokan source code,
-konfigurasi, dan bukti implementasi. Sesuaikan nama direktori dan file
-dengan struktur final repository.
-kubernetes-observability-monitoring/
-│
-├── kubernetes/
-│   ├── elasticsearch/
-│   ├── logstash/
-│   ├── fluent-bit/
-│   ├── kibana/
-│   ├── prometheus/
-│   ├── node-exporter/
-│   ├── kube-state-metrics/
-│   └── grafana/
-│
-├── helm/
-│
-├── dashboards/
-│
-├── screenshots/
-│   ├── architecture-logging.png
-│   ├── architecture-monitoring.png
-│   ├── kubernetes-cluster-validation.png
-│   ├── kubernetes-resource-information.png
-│   ├── checkpoint-01-environment-validation.png
-│   ├── incident-during.png
-│   ├── incident-investigation.png
-│   ├── incident-recovery.png
-│   └── repository-final.png
-│
-├── docs/
-│
-└── README.md
-1.  Dokumentasi dan Screenshot Evidence
-Seluruh bukti implementasi dan pengujian disimpan dalam direktori
-screenshots/ dan dikelompokkan berdasarkan tahapan pengerjaan.
+1. Metrics Monitoring menggunakan Prometheus dan Grafana
 
-Dokumentasi screenshot digunakan untuk menunjukkan:
-- Kondisi awal Kubernetes cluster dan resource environment.
-- Proses deployment komponen ELK Stack.
-- Pengumpulan, indexing, dan pencarian log.
-- Status Prometheus scrape targets dan hasil query metrics.
-- Dashboard monitoring Grafana.
-- Integrasi logging dan metrics.
-- Kondisi workload sebelum, saat, dan setelah incident.
-- Hasil troubleshooting dan recovery.
-- Kondisi akhir repository proyek.
-Setiap gambar dilengkapi keterangan sesuai tahapan implementasi agar
-proses verifikasi lebih mudah dilakukan.
-09. Kesimpulan
-Bagian kesimpulan ini perlu diselesaikan setelah seluruh checkpoint dan
-skenario pengujian telah dijalankan.
+Prometheus digunakan untuk mengumpulkan dan menyimpan metrics dari Kubernetes melalui Node Exporter dan Kube State Metrics. Metrics tersebut dapat dianalisis menggunakan PromQL dan divisualisasikan melalui Grafana Dashboard untuk memantau penggunaan CPU, memory, kondisi node, serta workload Kubernetes.
 
-Secara keseluruhan, proyek ini dirancang untuk membangun platform
-observability terpusat pada lingkungan Kubernetes dengan menggabungkan
-centralized logging menggunakan ELK Stack dan metrics monitoring
-menggunakan Prometheus serta Grafana.
+2. Centralized Logging menggunakan ELK Stack
 
-Melalui integrasi tersebut, administrator dapat mengumpulkan log
-aplikasi dan container, memantau kondisi resource Kubernetes,
-menganalisis gejala gangguan, serta melakukan investigasi dan validasi
-recovery berdasarkan data observability.
+Fluent Bit digunakan untuk mengumpulkan log container dari setiap node Kubernetes dan meneruskannya ke Logstash. Logstash memproses log sebelum dikirim ke Elasticsearch untuk penyimpanan dan indexing. Selanjutnya, Kibana digunakan untuk melakukan pencarian, filtering, dan analisis log secara terpusat.
 
-Kesimpulan akhir mengenai keberhasilan implementasi, komponen yang
-berjalan, dan hasil incident testing harus disesuaikan dengan bukti
-pengujian aktual dari setiap checkpoint.
+3. Incident Simulation dan Troubleshooting
+
+Pengujian dilakukan untuk memahami bagaimana Kubernetes menangani gangguan pada workload. Salah satu simulasi yang berhasil dilakukan adalah Pod Failure dengan menghapus salah satu Pod secara manual. Hasil pengujian menunjukkan ReplicaSet secara otomatis membuat Pod pengganti sehingga jumlah replica kembali menjadi dua dan seluruh Pod berstatus Running.
 
 10. Informasi Repository
 GitHub Repository:
@@ -380,5 +272,3 @@ RichardAkbar/kubernetes-observability-monitoring
 Pengembang: Richard Akbar
 
 Project: Kubernetes Observability & Monitoring Platform
-
-Status: In Progress --- perbarui setelah seluruh checkpoint selesai.
