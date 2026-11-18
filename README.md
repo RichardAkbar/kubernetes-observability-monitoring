@@ -265,10 +265,4 @@ Fluent Bit digunakan untuk mengumpulkan log container dari setiap node Kubernete
 
 Pengujian dilakukan untuk memahami bagaimana Kubernetes menangani gangguan pada workload. Salah satu simulasi yang berhasil dilakukan adalah Pod Failure dengan menghapus salah satu Pod secara manual. Hasil pengujian menunjukkan ReplicaSet secara otomatis membuat Pod pengganti sehingga jumlah replica kembali menjadi dua dan seluruh Pod berstatus Running.
 
-10. Informasi Repository
-GitHub Repository:
-RichardAkbar/kubernetes-observability-monitoring
 
-Pengembang: Richard Akbar
-
-Project: Kubernetes Observability & Monitoring Platform
